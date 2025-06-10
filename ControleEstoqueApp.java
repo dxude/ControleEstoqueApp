@@ -1,67 +1,70 @@
-
 import java.util.InputMismatchException;
+import java.util.Locale; 
 import java.util.Scanner;
 
 public class ControleEstoqueApp {
 
     private static final int CAPACIDADE_MAXIMA = 20;
-    
     private static Produto[] estoque = new Produto[CAPACIDADE_MAXIMA];
-    
     private static int quantidadeAtual = 0;
-  
-    private static Scanner scanner = new Scanner(System.in);
+    private static Scanner scanner = new Scanner(System.in).useLocale(Locale.US);
 
-    public static void main(String[] args) {
-        int opcao;
-        do {
+public static void main(String[] args) {
+    int opcao = -1; 
+
+    do {
+    
+        if (opcao != 0) {
             exibirMenu();
-            try {
-                opcao = scanner.nextInt();
-                scanner.nextLine(); 
+        }
 
-                switch (opcao) {
-                    case 1:
-                        cadastrarProduto();
-                        break;
-                    case 2:
-                        listarProdutos();
-                        break;
-                    case 3:
-                        filtrarPorCategoria();
-                        break;
-                    case 4:
-                        ordenarPorCategoria();
-                        break;
-                    case 5:
-                        removerProduto();
-                        break;
-                    case 6:
-                        atualizarPreco();
-                        break;
-                    case 7:
-                        gerarRelatorio();
-                        break;
-                    case 0:
-                        System.out.println("Saindo do sistema. Até logo!");
-                        break;
-                    default:
-                        System.out.println("Opção inválida. Por favor, tente novamente.");
-                }
-            } catch (InputMismatchException e) {
-                System.out.println("Erro: Entrada inválida. Por favor, insira um número.");
-                scanner.nextLine(); 
-                opcao = -1; 
+        try {
+           
+            if (!scanner.hasNextInt()) {
+                opcao = 0; 
+                continue;  
             }
 
-            if (opcao != 0) {
-                System.out.println("\nPressione Enter para voltar ao menu...");
-                scanner.nextLine();
+            opcao = scanner.nextInt();
+            scanner.nextLine(); 
+
+            switch (opcao) {
+                case 1:
+                    cadastrarProduto();
+                    break;
+                case 2:
+                    listarProdutos();
+                    break;
+                case 3:
+                    filtrarPorCategoria();
+                    break;
+                case 4:
+                    ordenarPorCategoria();
+                    break;
+                case 5:
+                    removerProduto();
+                    break;
+                case 6:
+                    atualizarPreco();
+                    break;
+                case 7:
+                    gerarRelatorio();
+                    break;
+                case 0:
+                
+                    break;
+                default:
+                    System.out.println("Opção inválida. Por favor, tente novamente.");
             }
+        } catch (InputMismatchException e) {
+            System.out.println("Erro: Entrada inválida. Por favor, insira um número.");
+            if (scanner.hasNextLine()) scanner.nextLine(); 
+            opcao = -1;
+        }
+    } while (opcao != 0);
 
-        } while (opcao != 0);
-
-        scanner.close();
+    System.out.println("\nExecução do script finalizada. Saindo do sistema.");
+    scanner.close();
     }
 
     private static void exibirMenu() {
@@ -91,19 +94,28 @@ public class ControleEstoqueApp {
             String categoria = scanner.nextLine();
             System.out.print("Quantidade em Estoque: ");
             int qtdEstoque = scanner.nextInt();
-            System.out.print("Preço Unitário (use vírgula para decimais): ");
+            System.out.print("Preço Unitário (use ponto para decimais): ");
             double preco = scanner.nextDouble();
             System.out.print("Quantidade Mínima em Estoque: ");
             int qtdMinima = scanner.nextInt();
+            
+
+            System.out.print("Digite 1 para cadastrar novo produto e outro valor para encerrar!");
+            int continuar = scanner.nextInt();
+            scanner.nextLine(); 
 
             Produto novoProduto = new Produto(nome, qtdEstoque, preco, categoria, qtdMinima);
             estoque[quantidadeAtual] = novoProduto;
             quantidadeAtual++;
             System.out.println("Produto cadastrado com sucesso!");
 
+            if (continuar == 1) {
+                cadastrarProduto();
+            }
+
         } catch (InputMismatchException e) {
             System.out.println("Erro de entrada. Por favor, insira os dados no formato correto.");
-            scanner.nextLine();
+            scanner.nextLine(); 
         }
     }
 
@@ -173,7 +185,6 @@ public class ControleEstoqueApp {
         if (indiceParaRemover == -1) {
             System.out.println("Erro: Produto '" + nome + "' não encontrado.");
         } else {
-
             for (int i = indiceParaRemover; i < quantidadeAtual - 1; i++) {
                 estoque[i] = estoque[i + 1];
             }
@@ -197,8 +208,9 @@ public class ControleEstoqueApp {
             }
 
             if (indiceParaAtualizar != -1) {
-                System.out.print("Digite o novo preço (use vírgula para decimais): ");
+                System.out.print("Digite o novo preço (use ponto para decimais): ");
                 double novoPreco = scanner.nextDouble();
+                scanner.nextLine(); 
                 estoque[indiceParaAtualizar].setPrecoUnitario(novoPreco);
                 System.out.println("Preço atualizado com sucesso!");
             } else {
@@ -218,7 +230,7 @@ public class ControleEstoqueApp {
 
         System.out.println("\n--- Relatório de Valor em Estoque por Categoria ---");
 
-        ordenarPorCategoria();
+        ordenarPorCategoria(); 
 
         String categoriaAtual = "";
         double subtotalCategoria = 0;
@@ -227,7 +239,7 @@ public class ControleEstoqueApp {
         for (int i = 0; i < quantidadeAtual; i++) {
             Produto p = estoque[i];
 
-            if (!p.getCategoria().equalsIgnoreCase(categoriaAtual)) {
+            if (i == 0 || !p.getCategoria().equalsIgnoreCase(categoriaAtual)) {
                 if (i > 0) {
                     System.out.println("  Subtotal da Categoria '" + categoriaAtual + "': " + String.format("R$ %.2f", subtotalCategoria));
                 }

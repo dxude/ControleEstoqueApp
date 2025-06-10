@@ -1,0 +1,31 @@
+1
+Martelo
+Ferramentas
+50
+25.50
+10
+1
+Trena 5m
+Ferramentas
+30
+15.00
+5
+1
+Tinta Latex Branca
+Pintura
+25
+120.00
+8
+2
+4
+3
+Ferramentas
+7
+6
+Martelo
+29.99
+2
+5
+Trena 5m
+2
+0
